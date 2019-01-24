@@ -57,7 +57,9 @@ def calculate_project_related(project_name):
            'gh_is_pr, ' \
            'gh_lang, ' \
            'git_branch, ' \
-           'gh_num_commits_in_push, ' \
+           'gh_diff_files_modified, ' \
+           'gh_diff_src_files, '\
+           'git_num_all_built_commits, '\
            'gh_team_size, ' \
            'git_diff_src_churn, ' \
            'gh_build_started_at, ' \
@@ -67,7 +69,8 @@ def calculate_project_related(project_name):
            'WHERE gh_project_name = \'{project}\' ' \
            'AND (tr_status =  \'passed\' OR tr_status = \'failed\')' \
            'ORDER BY tr_build_id'.format(project=project_name)
-    _contain = ['build_id', 'project_name', 'is_pr', 'language', 'branch', 'num_commits', 'team_size', 'modified_lines', 'build_started_at', 'duration', 'status']
+    _contain = ['build_id', 'project_name', 'is_pr', 'language', 'branch', 'num_all_files_modified',
+                'num_src_files_modified', 'git_num_all_built_commits', 'team_size', 'modified_lines', 'build_started_at', 'duration', 'status']
     result = read_db_to_df(_sql, _contain)
     # print '==========================tr_status===================================/n/n'
     # print result
@@ -146,9 +149,9 @@ def calculate_project_related(project_name):
 
 def save_data_into_db(df):
     try:
-        print '*** write_records_into_mysql ***'
+        print '***  ***'
         db = create_engine('mysql+mysqldb://root:123456@localhost:3306/travistorrent_calculated?charset=utf8')
-        df.to_sql(name='travistorrent_calculated_20_11', con=db, if_exists='append', index=False)
+        df.to_sql(name='travistorrent_calculated_09_01', con=db, if_exists='append', index=False)
     except Exception as e:
         print 'error', e
     else:
